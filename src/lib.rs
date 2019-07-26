@@ -1,5 +1,7 @@
+const PATTERN_LENGTH:u32 = 16;
+
 pub struct Sequencer {
-    current_step: u8,
+    current_step: u32,
 }
 
 impl Sequencer {
@@ -10,7 +12,7 @@ impl Sequencer {
 
 pub fn tick(s: Sequencer) -> Sequencer {
     Sequencer {
-        current_step: s.current_step + 1,
+        current_step: (s.current_step + 1) % PATTERN_LENGTH,
     }
 }
 
@@ -21,7 +23,15 @@ mod tests {
     #[test]
     fn it_ticks() {
         let s = Sequencer::new();
-        let s2 = tick(s);
-        assert_eq!(s2.current_step, 1);
+        let s = tick(s);
+        assert_eq!(s.current_step, 1);
+    }
+
+    #[test]
+    fn it_wraps_around() {
+        let s = Sequencer::new();
+        let a = 0..18;
+        let s = a.fold(s, |s, _i| tick(s));
+        assert_eq!(s.current_step, 2);
     }
 }
